@@ -29,3 +29,5 @@ pip-log.txt
 # Train / test data directories
 train/
 test/
+
+*results.csv

@@ -65,25 +65,6 @@ def compute_radius(X, max_x, max_y):
     centered_coords = [X.ix[:,0] - center[0], \
                        X.ix[:,1] - center[1]]
     return np.linalg.norm(centered_coords)
-
-
-def fit_and_predict(X_train, y_train, X_test, y_test):
-    """Fit a gaussian process model and predict, reporting resultant percent
-    error.
-    """
-    
-    # Train Gaussian Process Model. Using noise parameter 
-    # specified by the user.
-    gp = GaussianProcess(nugget = args.noise_param)
-    gp.fit(X_train, y_train)
-    
-    # Predict and record absolute percent error.
-    y_pred = gp.predict(X_test)
-    
-    assert y_test.shape == y_pred.shape, \
-        'test and predicted y column dimensions do not match.'
-    
-    return np.abs(np.mean((y_pred - y_test) / y_test))
     
 
 if __name__ == "__main__":
@@ -148,14 +129,23 @@ if __name__ == "__main__":
                 X_test            = test_data[['X', 'Y']]
                 X_test['radius']  = compute_radius(X_test, \
                                                    args.max_x, args.max_y)        
-
+                
                 # iterate over dependent variable columns, create y-vector for
                 # each, train and predict.
                 for j, col in enumerate(cols):
                     y_train = train_data[col]
                     y_test  = test_data[col]
+                    
+                    # Train Gaussian Process Model. Using noise parameter 
+                    # specified by the user.
+                    gp = GaussianProcess(nugget = args.noise_param)
+                    gp.fit(X_train, y_train)
+
+                    # Predict and record absolute percent error.
+                    y_pred = gp.predict(X_test)
+
                     results.ix[i, j] = \
-                        fit_and_predict(X_train, y_train, X_test, y_test)
+                        np.abs(np.mean((y_pred - y_test) / y_test))
                 
                 # save results for this wafer to results CSV file
                 c.writerow([wafer] + results.ix[i, :].tolist())
