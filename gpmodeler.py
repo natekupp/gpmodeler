@@ -145,7 +145,7 @@ if __name__ == "__main__":
                     y_pred = gp.predict(X_test)
 
                     results.ix[i, j] = \
-                        np.abs(np.mean((y_pred - y_test) / y_test))
+                        np.mean(np.abs((y_pred - y_test) / y_test))
                 
                 # save results for this wafer to results CSV file
                 c.writerow([wafer] + results.ix[i, :].tolist())
