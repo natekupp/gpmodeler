@@ -60,12 +60,9 @@ def time_stamped(fname, fmt='%Y-%m-%d__%H-%M-%S_{fname}'):
 def compute_radius(X, max_x, max_y):
     """Compute the radius of a chip coordinate.
     """
-    center          = [max_x / 2.0, \
-                       max_y / 2.0]
-    centered_coords = [X.ix[:,0] - center[0], \
-                       X.ix[:,1] - center[1]]
-    return np.linalg.norm(centered_coords)
-    
+    center = [max_x / 2.0, max_y / 2.0]
+    return np.sqrt((X.ix[:,0] - center[0])**2 + (X.ix[:,1] - center[1])**2)
+
 
 if __name__ == "__main__":
     args         = parse_args()
